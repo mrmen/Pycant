@@ -26,15 +26,25 @@ valide = 0
 imageFrame = tk.Frame(window, width=600, height=500)
 imageFrame.grid(row=0, column=0, padx=10, pady=2)
 
+
 #Capture video frames
 box = tk.Listbox(imageFrame)
 box.pack()
 cap = cv2.VideoCapture(0)
 
 def show_frame():
-    global Eleves, Results, valide
+    global Eleves, Results, valide, etat, box
     _, frame = cap.read()
     frame = cv2.flip(frame, 1)
+    def toggleVideo(e):
+        global cap, box, etat
+        etat = 1-etat
+    if etat:
+        cv2.imshow('Image actuelle', frame)
+    else:
+        cv2.destroyAllWindows()
+    box.bind("v", toggleVideo)
+
     img = frame
     cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
     decodedObjects = pyzbar.decode(cv2.flip(img, 1))
@@ -58,6 +68,6 @@ def show_frame():
     box.after(100, show_frame)
 
 
-
+etat = 0
 show_frame()  #Display 2
 window.mainloop()  #Starts GUI
